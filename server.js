@@ -5,7 +5,7 @@ const { createClient } = require("@supabase/supabase-js");
 const emailjs = require("@emailjs/nodejs");
 
 const app = express();
-app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:3000" }));
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => res.json({ status: "ok" }));
