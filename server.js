@@ -6,7 +6,18 @@ const emailjs = require("@emailjs/nodejs");
 const jwt = require("jsonwebtoken");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: [
+        "https://www.stashpatr1ck.fans",
+        "https://stashpatr1ck.fans",
+        "http://localhost:5173"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options("*", cors());
 app.use(express.json());
 
 app.get("/", (req, res) => res.json({ status: "ok" }));
